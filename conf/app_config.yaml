@@ -26,7 +26,7 @@ elasticsearch:
 llm:
   provider: qwen
   model: kimi-k3
-  api_key: sk-cb2cf121242b4020aa61338c6bbe3a06
+  api_key: 
   base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
   temperature: 0
 
