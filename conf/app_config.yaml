@@ -1,0 +1,37 @@
+mysql:
+  host: localhost
+  port: 3306
+  username: user1
+  password: user1
+  database: railway_agent
+  charset: utf8mb4
+
+
+qdrant:
+  host: localhost
+  port: 6333
+
+  collections:
+    tables: railway_tables
+    columns: railway_columns
+    metrics: railway_metrics
+
+
+elasticsearch:
+  url: http://localhost:9200
+  index:
+    dimension_values: railway_dimension_values
+
+
+llm:
+  provider: qwen
+  model: kimi-k3
+  api_key: sk-cb2cf121242b4020aa61338c6bbe3a06
+  base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  temperature: 0
+
+
+embedding:
+  provider: ollama
+  model: nomic-embed-text
+  base_url: http://localhost:11434

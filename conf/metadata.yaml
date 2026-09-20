@@ -1,0 +1,1158 @@
+tables:
+  line:
+    name: 线路信息表
+    description: >
+      存储轨道交通线路基础信息，包括线路编码、线路名称、
+      所属城市和运营状态。
+      用于按线路查询和统计车辆、设备、故障、报警及健康度情况。
+    business_domain: 线路管理
+    primary_key: line_id
+    active: true
+
+  vehicle:
+    name: 车辆信息表
+    description: >
+      存储轨道车辆基础信息，包括车辆编号、车辆型号、
+      所属线路、制造商、生产日期、投入运营日期和车辆状态。
+      用于按车辆、车型、线路或制造商进行查询和统计。
+    business_domain: 车辆管理
+    primary_key: vehicle_id
+    active: true
+
+  device:
+    name: 车辆设备信息表
+    description: >
+      存储车辆设备基础信息，包括设备编码、设备名称、
+      设备类型、所属系统、制造商、安装位置和设备状态。
+      用于查询车辆设备、设备类型、所属系统以及设备状态情况。
+    business_domain: 设备管理
+    primary_key: device_id
+    active: true
+
+  fault_record:
+    name: 车辆设备故障记录表
+    description: >
+      记录车辆设备发生的故障，包括故障代码、故障类型、
+      故障等级、发生时间、恢复时间、故障原因和恢复状态。
+      用于查询和统计车辆故障、设备故障、严重故障、
+      故障次数、故障类型及故障时间趋势。
+    business_domain: 故障管理
+    primary_key: fault_id
+    active: true
+
+  alarm_record:
+    name: 车辆设备报警记录表
+    description: >
+      记录车辆设备产生的报警，包括报警代码、报警类型、
+      报警等级、发生时间、解除时间和报警状态。
+      用于查询和统计车辆报警、设备报警、严重报警、
+      报警次数、报警类型及报警时间趋势。
+    business_domain: 报警管理
+    primary_key: alarm_id
+    active: true
+
+  vehicle_daily_health:
+    name: 每日车辆健康度评分表
+    description: >
+      记录每辆车每天的综合健康度评分、健康等级、
+      设备评分、故障评分、报警评分及当天故障和报警数量。
+      用于查询车辆健康状态、健康度排名、平均健康度和健康度变化趋势。
+    business_domain: 健康评估
+    primary_key: health_id
+    active: true
+
+columns:
+
+  # =========================================================
+  # line 线路信息表
+  # =========================================================
+
+  line.line_id:
+    table_name: line
+    column_name: line_id
+    name: 线路ID
+    type: bigint
+    description: >
+      线路唯一标识，用于关联车辆所属线路。
+    primary_key: true
+    foreign_key: false
+    active: true
+
+  line.line_code:
+    table_name: line
+    column_name: line_code
+    name: 线路编码
+    type: varchar(50)
+    description: >
+      线路业务编码，例如 L1、L2，用于标识不同轨道交通线路。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  line.line_name:
+    table_name: line
+    column_name: line_name
+    name: 线路名称
+    type: varchar(100)
+    description: >
+      轨道交通线路名称，例如1号线、2号线，用于按线路进行查询和统计。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  line.city:
+    table_name: line
+    column_name: city
+    name: 所属城市
+    type: varchar(100)
+    description: >
+      线路所属城市，用于按城市筛选和统计轨道交通线路。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  line.status:
+    table_name: line
+    column_name: status
+    name: 线路状态
+    type: varchar(20)
+    description: >
+      表示线路当前运营状态，例如运营或停运。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  line.created_at:
+    table_name: line
+    column_name: created_at
+    name: 创建时间
+    type: datetime
+    description: >
+      线路信息记录创建时间。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+
+  # =========================================================
+  # vehicle 车辆信息表
+  # =========================================================
+
+  vehicle.vehicle_id:
+    table_name: vehicle
+    column_name: vehicle_id
+    name: 车辆ID
+    type: bigint
+    description: >
+      车辆唯一标识，用于关联车辆设备、故障、报警及每日健康度记录。
+    primary_key: true
+    foreign_key: false
+    active: true
+
+  vehicle.vehicle_no:
+    table_name: vehicle
+    column_name: vehicle_no
+    name: 车辆编号
+    type: varchar(50)
+    description: >
+      车辆业务编号，例如 L1-001，用于查询某一辆具体车辆。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle.vehicle_model:
+    table_name: vehicle
+    column_name: vehicle_model
+    name: 车辆型号
+    type: varchar(100)
+    description: >
+      车辆所属车型，例如A型车、B型车，用于按车型查询和统计车辆。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle.line_id:
+    table_name: vehicle
+    column_name: line_id
+    name: 所属线路ID
+    type: bigint
+    description: >
+      车辆所属线路标识，用于关联线路信息并按线路统计车辆数据。
+    primary_key: false
+    foreign_key: true
+    references_table: line
+    references_column: line_id
+    active: true
+
+  vehicle.manufacturer:
+    table_name: vehicle
+    column_name: manufacturer
+    name: 车辆制造商
+    type: varchar(100)
+    description: >
+      车辆生产制造企业，用于按制造商查询和统计车辆。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle.manufacture_date:
+    table_name: vehicle
+    column_name: manufacture_date
+    name: 生产日期
+    type: date
+    description: >
+      车辆生产制造日期，可用于分析车辆车龄和生产时间。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle.service_date:
+    table_name: vehicle
+    column_name: service_date
+    name: 投入运营日期
+    type: date
+    description: >
+      车辆正式投入运营的日期，可用于分析车辆运营年限。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle.status:
+    table_name: vehicle
+    column_name: status
+    name: 车辆状态
+    type: varchar(20)
+    description: >
+      表示车辆当前状态，例如运营、备用或检修。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle.created_at:
+    table_name: vehicle
+    column_name: created_at
+    name: 创建时间
+    type: datetime
+    description: >
+      车辆信息记录创建时间。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+
+  # =========================================================
+  # device 车辆设备信息表
+  # =========================================================
+
+  device.device_id:
+    table_name: device
+    column_name: device_id
+    name: 设备ID
+    type: bigint
+    description: >
+      设备唯一标识，用于关联设备对应的故障和报警记录。
+    primary_key: true
+    foreign_key: false
+    active: true
+
+  device.vehicle_id:
+    table_name: device
+    column_name: vehicle_id
+    name: 所属车辆ID
+    type: bigint
+    description: >
+      设备所属车辆标识，用于查询某辆车安装的设备。
+    primary_key: false
+    foreign_key: true
+    references_table: vehicle
+    references_column: vehicle_id
+    active: true
+
+  device.device_code:
+    table_name: device
+    column_name: device_code
+    name: 设备编码
+    type: varchar(50)
+    description: >
+      设备业务编码，用于识别车辆上的具体设备。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.device_name:
+    table_name: device
+    column_name: device_name
+    name: 设备名称
+    type: varchar(100)
+    description: >
+      设备业务名称，例如牵引逆变器、制动控制单元、辅助变流器等，
+      用于按具体设备名称查询故障和报警。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.device_type:
+    table_name: device
+    column_name: device_type
+    name: 设备类型
+    type: varchar(100)
+    description: >
+      设备所属类型，用于按设备类别进行查询和统计。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.system_name:
+    table_name: device
+    column_name: system_name
+    name: 所属系统
+    type: varchar(100)
+    description: >
+      设备所属车辆系统，例如牵引系统、制动系统、车门系统或空调系统，
+      用于按车辆子系统查询设备、故障和报警。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.manufacturer:
+    table_name: device
+    column_name: manufacturer
+    name: 设备制造商
+    type: varchar(100)
+    description: >
+      设备生产制造企业，用于按设备制造商进行查询和统计。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.install_position:
+    table_name: device
+    column_name: install_position
+    name: 安装位置
+    type: varchar(100)
+    description: >
+      设备在车辆上的安装位置，用于查询不同安装区域的设备。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.install_date:
+    table_name: device
+    column_name: install_date
+    name: 安装日期
+    type: date
+    description: >
+      设备安装到车辆上的日期，可用于分析设备使用年限。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.status:
+    table_name: device
+    column_name: status
+    name: 设备状态
+    type: varchar(20)
+    description: >
+      表示设备当前状态，例如正常、检修或故障。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  device.created_at:
+    table_name: device
+    column_name: created_at
+    name: 创建时间
+    type: datetime
+    description: >
+      设备信息记录创建时间。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+
+  # =========================================================
+  # fault_record 车辆设备故障记录表
+  # =========================================================
+
+  fault_record.fault_id:
+    table_name: fault_record
+    column_name: fault_id
+    name: 故障ID
+    type: bigint
+    description: >
+      故障记录唯一标识，用于区分不同故障事件。
+    primary_key: true
+    foreign_key: false
+    active: true
+
+  fault_record.vehicle_id:
+    table_name: fault_record
+    column_name: vehicle_id
+    name: 故障车辆ID
+    type: bigint
+    description: >
+      发生故障的车辆标识，用于按车辆统计和查询故障。
+    primary_key: false
+    foreign_key: true
+    references_table: vehicle
+    references_column: vehicle_id
+    active: true
+
+  fault_record.device_id:
+    table_name: fault_record
+    column_name: device_id
+    name: 故障设备ID
+    type: bigint
+    description: >
+      发生故障的设备标识，用于关联设备并分析不同设备的故障情况。
+    primary_key: false
+    foreign_key: true
+    references_table: device
+    references_column: device_id
+    active: true
+
+  fault_record.fault_code:
+    table_name: fault_record
+    column_name: fault_code
+    name: 故障代码
+    type: varchar(50)
+    description: >
+      设备故障代码，用于按照故障码识别和查询具体故障。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.fault_type:
+    table_name: fault_record
+    column_name: fault_type
+    name: 故障类型
+    type: varchar(100)
+    description: >
+      表示设备发生的具体故障类别，例如过流故障、过压故障、
+      通信故障或温度异常，用于按故障类型筛选和统计。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.fault_level:
+    table_name: fault_record
+    column_name: fault_level
+    name: 故障等级
+    type: varchar(20)
+    description: >
+      表示故障严重程度，例如一般、较重或严重，
+      用于查询和统计不同严重等级的故障。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.fault_time:
+    table_name: fault_record
+    column_name: fault_time
+    name: 故障发生时间
+    type: datetime
+    description: >
+      故障实际发生时间，用于按日期、时间范围或时间趋势查询故障。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.recover_time:
+    table_name: fault_record
+    column_name: recover_time
+    name: 故障恢复时间
+    type: datetime
+    description: >
+      故障恢复正常的时间，可用于分析故障持续时间和恢复情况。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.fault_description:
+    table_name: fault_record
+    column_name: fault_description
+    name: 故障描述
+    type: text
+    description: >
+      对故障现象和异常情况的文字描述，用于查看故障详细信息。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.fault_cause:
+    table_name: fault_record
+    column_name: fault_cause
+    name: 故障原因
+    type: varchar(255)
+    description: >
+      记录造成设备故障的原因，用于查询和分析不同故障原因。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.status:
+    table_name: fault_record
+    column_name: status
+    name: 故障状态
+    type: varchar(20)
+    description: >
+      表示故障当前是否恢复，例如已恢复或未恢复，
+      用于查询尚未恢复的故障。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  fault_record.created_at:
+    table_name: fault_record
+    column_name: created_at
+    name: 创建时间
+    type: datetime
+    description: >
+      故障记录写入系统的时间。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+
+  # =========================================================
+  # alarm_record 车辆设备报警记录表
+  # =========================================================
+
+  alarm_record.alarm_id:
+    table_name: alarm_record
+    column_name: alarm_id
+    name: 报警ID
+    type: bigint
+    description: >
+      报警记录唯一标识，用于区分不同报警事件。
+    primary_key: true
+    foreign_key: false
+    active: true
+
+  alarm_record.vehicle_id:
+    table_name: alarm_record
+    column_name: vehicle_id
+    name: 报警车辆ID
+    type: bigint
+    description: >
+      产生报警的车辆标识，用于按车辆查询和统计报警。
+    primary_key: false
+    foreign_key: true
+    references_table: vehicle
+    references_column: vehicle_id
+    active: true
+
+  alarm_record.device_id:
+    table_name: alarm_record
+    column_name: device_id
+    name: 报警设备ID
+    type: bigint
+    description: >
+      产生报警的设备标识，用于关联设备并统计不同设备的报警情况。
+    primary_key: false
+    foreign_key: true
+    references_table: device
+    references_column: device_id
+    active: true
+
+  alarm_record.alarm_code:
+    table_name: alarm_record
+    column_name: alarm_code
+    name: 报警代码
+    type: varchar(50)
+    description: >
+      设备报警代码，用于按照报警码识别和查询具体报警。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  alarm_record.alarm_type:
+    table_name: alarm_record
+    column_name: alarm_type
+    name: 报警类型
+    type: varchar(100)
+    description: >
+      表示设备产生的具体报警类别，用于按报警类型筛选和统计报警记录。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  alarm_record.alarm_level:
+    table_name: alarm_record
+    column_name: alarm_level
+    name: 报警等级
+    type: varchar(20)
+    description: >
+      表示报警严重程度，例如一般、较重或严重，
+      用于查询和统计不同等级的报警。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  alarm_record.alarm_time:
+    table_name: alarm_record
+    column_name: alarm_time
+    name: 报警发生时间
+    type: datetime
+    description: >
+      报警实际发生时间，用于按日期、时间范围或时间趋势查询报警。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  alarm_record.clear_time:
+    table_name: alarm_record
+    column_name: clear_time
+    name: 报警解除时间
+    type: datetime
+    description: >
+      报警解除的时间，可用于分析报警持续时间和解除情况。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  alarm_record.alarm_content:
+    table_name: alarm_record
+    column_name: alarm_content
+    name: 报警内容
+    type: text
+    description: >
+      对报警具体内容和异常现象的文字说明。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  alarm_record.status:
+    table_name: alarm_record
+    column_name: status
+    name: 报警状态
+    type: varchar(20)
+    description: >
+      表示报警当前是否解除，例如已解除或未解除，
+      用于查询当前仍未解除的报警。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  alarm_record.created_at:
+    table_name: alarm_record
+    column_name: created_at
+    name: 创建时间
+    type: datetime
+    description: >
+      报警记录写入系统的时间。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+
+  # =========================================================
+  # vehicle_daily_health 每日车辆健康度评分表
+  # =========================================================
+
+  vehicle_daily_health.health_id:
+    table_name: vehicle_daily_health
+    column_name: health_id
+    name: 健康度记录ID
+    type: bigint
+    description: >
+      每日车辆健康度记录唯一标识。
+    primary_key: true
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.vehicle_id:
+    table_name: vehicle_daily_health
+    column_name: vehicle_id
+    name: 车辆ID
+    type: bigint
+    description: >
+      健康度评分对应的车辆标识，用于关联车辆基础信息。
+    primary_key: false
+    foreign_key: true
+    references_table: vehicle
+    references_column: vehicle_id
+    active: true
+
+  vehicle_daily_health.stat_date:
+    table_name: vehicle_daily_health
+    column_name: stat_date
+    name: 统计日期
+    type: date
+    description: >
+      车辆健康度对应的统计日期，用于按天或时间范围分析健康状态。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.health_score:
+    table_name: vehicle_daily_health
+    column_name: health_score
+    name: 综合健康度评分
+    type: decimal(5,2)
+    description: >
+      车辆每日综合健康度评分，取值范围为0到100，
+      用于比较车辆健康程度、计算平均健康度及进行健康度排名。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.health_level:
+    table_name: vehicle_daily_health
+    column_name: health_level
+    name: 健康等级
+    type: varchar(20)
+    description: >
+      根据综合健康度评分划分的车辆健康等级，
+      例如优秀、良好、一般、较差或危险。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.device_score:
+    table_name: vehicle_daily_health
+    column_name: device_score
+    name: 设备状态评分
+    type: decimal(5,2)
+    description: >
+      反映车辆设备整体状态的每日评分，是综合健康度评价的组成部分。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.fault_score:
+    table_name: vehicle_daily_health
+    column_name: fault_score
+    name: 故障评分
+    type: decimal(5,2)
+    description: >
+      根据车辆当天故障情况计算的评分，是综合健康度评价的组成部分。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.alarm_score:
+    table_name: vehicle_daily_health
+    column_name: alarm_score
+    name: 报警评分
+    type: decimal(5,2)
+    description: >
+      根据车辆当天报警情况计算的评分，是综合健康度评价的组成部分。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.fault_count:
+    table_name: vehicle_daily_health
+    column_name: fault_count
+    name: 当日故障数量
+    type: int
+    description: >
+      车辆在统计日期当天发生的全部故障次数。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.alarm_count:
+    table_name: vehicle_daily_health
+    column_name: alarm_count
+    name: 当日报警数量
+    type: int
+    description: >
+      车辆在统计日期当天产生的全部报警次数。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.critical_fault_count:
+    table_name: vehicle_daily_health
+    column_name: critical_fault_count
+    name: 严重故障数量
+    type: int
+    description: >
+      车辆在统计日期当天发生的严重等级故障次数。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.critical_alarm_count:
+    table_name: vehicle_daily_health
+    column_name: critical_alarm_count
+    name: 严重报警数量
+    type: int
+    description: >
+      车辆在统计日期当天产生的严重等级报警次数。
+    primary_key: false
+    foreign_key: false
+    active: true
+
+  vehicle_daily_health.calculated_at:
+    table_name: vehicle_daily_health
+    column_name: calculated_at
+    name: 健康度计算时间
+    type: datetime
+    description: >
+      每日车辆健康度评分实际完成计算并写入系统的时间。
+    primary_key: false
+    foreign_key: false
+    active: true
+metrics:
+
+  # =========================================================
+  # 基础数量指标
+  # =========================================================
+
+  vehicle_count:
+    name: 车辆数量
+    description: >
+      统计满足指定线路、车型、制造商或车辆状态等条件的车辆总数。
+    formula: COUNT(DISTINCT vehicle.vehicle_id)
+    related_tables:
+      - vehicle
+    related_columns:
+      - vehicle.vehicle_id
+    unit: 辆
+    active: true
+
+
+  device_count:
+    name: 设备数量
+    description: >
+      统计满足指定车辆、设备类型、所属系统或设备状态等条件的设备总数。
+    formula: COUNT(DISTINCT device.device_id)
+    related_tables:
+      - device
+    related_columns:
+      - device.device_id
+    unit: 台
+    active: true
+
+
+  # =========================================================
+  # 故障指标
+  # =========================================================
+
+  fault_count:
+    name: 故障次数
+    description: >
+      统计指定车辆、线路、设备、故障类型、故障等级或时间范围内
+      发生的故障记录数量。
+    formula: COUNT(fault_record.fault_id)
+    related_tables:
+      - fault_record
+    related_columns:
+      - fault_record.fault_id
+    unit: 次
+    active: true
+
+
+  critical_fault_count:
+    name: 严重故障次数
+    description: >
+      统计故障等级为严重的故障记录数量，
+      可按车辆、线路、设备或时间范围进一步筛选。
+    formula: COUNT(fault_record.fault_id)
+    conditions:
+      - "fault_record.fault_level = '严重'"
+    related_tables:
+      - fault_record
+    related_columns:
+      - fault_record.fault_id
+      - fault_record.fault_level
+    unit: 次
+    active: true
+
+
+  unrecovered_fault_count:
+    name: 未恢复故障数量
+    description: >
+      统计当前状态为未恢复的故障数量，
+      用于查询尚未恢复或仍未解决的故障。
+    formula: COUNT(fault_record.fault_id)
+    conditions:
+      - "fault_record.status = '未恢复'"
+    related_tables:
+      - fault_record
+    related_columns:
+      - fault_record.fault_id
+      - fault_record.status
+    unit: 次
+    active: true
+
+
+  fault_vehicle_count:
+    name: 故障车辆数量
+    description: >
+      统计指定条件或时间范围内至少发生过一次故障的不同车辆数量。
+    formula: COUNT(DISTINCT fault_record.vehicle_id)
+    related_tables:
+      - fault_record
+    related_columns:
+      - fault_record.vehicle_id
+    unit: 辆
+    active: true
+
+
+  fault_device_count:
+    name: 故障设备数量
+    description: >
+      统计指定条件或时间范围内至少发生过一次故障的不同设备数量。
+    formula: COUNT(DISTINCT fault_record.device_id)
+    related_tables:
+      - fault_record
+    related_columns:
+      - fault_record.device_id
+    unit: 台
+    active: true
+
+
+  avg_fault_recovery_minutes:
+    name: 平均故障恢复时长
+    description: >
+      统计已经恢复的故障从发生到恢复所需的平均时间，
+      用于衡量故障处理和恢复效率。
+    formula: AVG(TIMESTAMPDIFF(MINUTE, fault_record.fault_time, fault_record.recover_time))
+    conditions:
+      - "fault_record.recover_time IS NOT NULL"
+    related_tables:
+      - fault_record
+    related_columns:
+      - fault_record.fault_time
+      - fault_record.recover_time
+    unit: 分钟
+    active: true
+
+
+  # =========================================================
+  # 报警指标
+  # =========================================================
+
+  alarm_count:
+    name: 报警次数
+    description: >
+      统计指定车辆、线路、设备、报警类型、报警等级或时间范围内
+      产生的报警记录数量。
+    formula: COUNT(alarm_record.alarm_id)
+    related_tables:
+      - alarm_record
+    related_columns:
+      - alarm_record.alarm_id
+    unit: 次
+    active: true
+
+
+  critical_alarm_count:
+    name: 严重报警次数
+    description: >
+      统计报警等级为严重的报警记录数量，
+      可按车辆、线路、设备或时间范围进一步筛选。
+    formula: COUNT(alarm_record.alarm_id)
+    conditions:
+      - "alarm_record.alarm_level = '严重'"
+    related_tables:
+      - alarm_record
+    related_columns:
+      - alarm_record.alarm_id
+      - alarm_record.alarm_level
+    unit: 次
+    active: true
+
+
+  uncleared_alarm_count:
+    name: 未解除报警数量
+    description: >
+      统计当前仍处于未解除状态的报警数量，
+      用于查询尚未清除或仍在持续的报警。
+    formula: COUNT(alarm_record.alarm_id)
+    conditions:
+      - "alarm_record.status = '未解除'"
+    related_tables:
+      - alarm_record
+    related_columns:
+      - alarm_record.alarm_id
+      - alarm_record.status
+    unit: 次
+    active: true
+
+
+  alarm_vehicle_count:
+    name: 报警车辆数量
+    description: >
+      统计指定条件或时间范围内至少产生过一次报警的不同车辆数量。
+    formula: COUNT(DISTINCT alarm_record.vehicle_id)
+    related_tables:
+      - alarm_record
+    related_columns:
+      - alarm_record.vehicle_id
+    unit: 辆
+    active: true
+
+
+  alarm_device_count:
+    name: 报警设备数量
+    description: >
+      统计指定条件或时间范围内至少产生过一次报警的不同设备数量。
+    formula: COUNT(DISTINCT alarm_record.device_id)
+    related_tables:
+      - alarm_record
+    related_columns:
+      - alarm_record.device_id
+    unit: 台
+    active: true
+
+
+  avg_alarm_duration_minutes:
+    name: 平均报警持续时长
+    description: >
+      统计已经解除的报警从发生到解除所持续的平均时间，
+      用于分析报警持续时间和处理效率。
+    formula: AVG(TIMESTAMPDIFF(MINUTE, alarm_record.alarm_time, alarm_record.clear_time))
+    conditions:
+      - "alarm_record.clear_time IS NOT NULL"
+    related_tables:
+      - alarm_record
+    related_columns:
+      - alarm_record.alarm_time
+      - alarm_record.clear_time
+    unit: 分钟
+    active: true
+
+
+  # =========================================================
+  # 健康度指标
+  # =========================================================
+
+  avg_health_score:
+    name: 平均健康度
+    description: >
+      统计指定车辆、车型、线路或时间范围内车辆综合健康度评分的平均值，
+      用于比较车辆或线路整体健康水平。
+    formula: AVG(vehicle_daily_health.health_score)
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.health_score
+    unit: 分
+    active: true
+
+
+  min_health_score:
+    name: 最低健康度
+    description: >
+      获取指定车辆、线路或时间范围内最低的综合健康度评分，
+      用于发现健康状态最差的车辆或日期。
+    formula: MIN(vehicle_daily_health.health_score)
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.health_score
+    unit: 分
+    active: true
+
+
+  max_health_score:
+    name: 最高健康度
+    description: >
+      获取指定车辆、线路或时间范围内最高的综合健康度评分，
+      用于分析最佳健康状态。
+    formula: MAX(vehicle_daily_health.health_score)
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.health_score
+    unit: 分
+    active: true
+
+
+  avg_device_score:
+    name: 平均设备评分
+    description: >
+      统计指定车辆、线路或时间范围内设备状态评分的平均值，
+      用于反映车辆设备整体健康水平。
+    formula: AVG(vehicle_daily_health.device_score)
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.device_score
+    unit: 分
+    active: true
+
+
+  avg_fault_score:
+    name: 平均故障评分
+    description: >
+      统计指定车辆、线路或时间范围内故障评分的平均值，
+      用于反映故障因素对车辆健康状态的影响。
+    formula: AVG(vehicle_daily_health.fault_score)
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.fault_score
+    unit: 分
+    active: true
+
+
+  avg_alarm_score:
+    name: 平均报警评分
+    description: >
+      统计指定车辆、线路或时间范围内报警评分的平均值，
+      用于反映报警因素对车辆健康状态的影响。
+    formula: AVG(vehicle_daily_health.alarm_score)
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.alarm_score
+    unit: 分
+    active: true
+
+
+  low_health_vehicle_days:
+    name: 低健康度车辆天数
+    description: >
+      统计综合健康度低于80分的车辆日记录数量。
+      对单辆车查询时表示该车辆健康度低于80分的天数；
+      对多辆车查询时表示所有车辆低健康度状态的累计车辆天数。
+    formula: COUNT(vehicle_daily_health.health_id)
+    conditions:
+      - "vehicle_daily_health.health_score < 80"
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.health_id
+      - vehicle_daily_health.health_score
+      - vehicle_daily_health.stat_date
+    unit: 车辆天
+    active: true
+
+
+  danger_vehicle_days:
+    name: 危险健康状态车辆天数
+    description: >
+      统计健康等级为危险的车辆日记录数量，
+      用于分析车辆进入高风险健康状态的频次。
+    formula: COUNT(vehicle_daily_health.health_id)
+    conditions:
+      - "vehicle_daily_health.health_level = '危险'"
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.health_id
+      - vehicle_daily_health.health_level
+    unit: 车辆天
+    active: true
+
+
+  low_health_vehicle_count:
+    name: 低健康度车辆数量
+    description: >
+      统计指定日期或时间范围内至少出现过一次健康度低于80分的不同车辆数量。
+    formula: COUNT(DISTINCT vehicle_daily_health.vehicle_id)
+    conditions:
+      - "vehicle_daily_health.health_score < 80"
+    related_tables:
+      - vehicle_daily_health
+    related_columns:
+      - vehicle_daily_health.vehicle_id
+      - vehicle_daily_health.health_score
+    unit: 辆
+    active: true
